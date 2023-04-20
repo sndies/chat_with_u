@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/golang/glog"
 	"github.com/sndies/chat_with_u/db"
 	"github.com/sndies/chat_with_u/service"
 	"log"
@@ -9,6 +10,8 @@ import (
 )
 
 func main() {
+	defer glog.Flush()
+
 	if err := db.Init(); err != nil {
 		panic(fmt.Sprintf("mysql init failed with %+v", err))
 	}

@@ -11,6 +11,9 @@ COPY . /app/
 # 执行代码编译命令。操作系统参数为linux，编译后的二进制产物命名为main，并存放在当前目录下。
 RUN GOOS=linux go build -o main .
 
+# 创建日志目录
+RUN mkdir -p log
+
 # 选用运行时所用基础镜像（GO语言选择原则：尽量体积小、包含基础linux内容的基础镜像）
 FROM alpine:3.13
 
@@ -29,4 +32,4 @@ COPY --from=builder /app/main /app/
 # 执行启动命令
 # 写多行独立的CMD命令是错误写法！只有最后一行CMD命令会被执行，之前的都会被忽略，导致业务报错。
 # 请参考[Docker官方文档之CMD命令](https://docs.docker.com/engine/reference/builder/#cmd)
-CMD ["/app/main -log_dir=log -alsologtostderr"]
+CMD ["/app/main", "-log_dir=log -alsologtostderr"]
