@@ -9,7 +9,7 @@ import (
 
 	"github.com/sndies/chat_with_u/db/dao"
 	"github.com/sndies/chat_with_u/db/model"
-
+	"github.com/golang/glog"
 	"gorm.io/gorm"
 )
 
@@ -34,6 +34,7 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 func CounterHandler(w http.ResponseWriter, r *http.Request) {
 	res := &JsonResult{}
 
+	glog.Info("http request: %+v", r)
 	if r.Method == http.MethodGet {
 		counter, err := getCurrentCounter()
 		if err != nil {
