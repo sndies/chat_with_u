@@ -38,7 +38,7 @@ func CounterHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		counter, err := getCurrentCounter()
 		if err != nil {
-			res.Code = -1
+			res.Status = -1
 			res.ErrorMsg = err.Error()
 		} else {
 			res.Data = counter.Count
@@ -46,13 +46,13 @@ func CounterHandler(w http.ResponseWriter, r *http.Request) {
 	} else if r.Method == http.MethodPost {
 		count, err := modifyCounter(r)
 		if err != nil {
-			res.Code = -1
+			res.Status = -1
 			res.ErrorMsg = err.Error()
 		} else {
 			res.Data = count
 		}
 	} else {
-		res.Code = -1
+		res.Status = -1
 		res.ErrorMsg = fmt.Sprintf("请求方法 %s 不支持", r.Method)
 	}
 
