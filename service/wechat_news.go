@@ -44,7 +44,7 @@ func HandleWechatNews(w http.ResponseWriter, r *http.Request) {
 		_, _ = fmt.Fprint(w, "内部错误")
 		return
 	}
-	glog.Infof("response: %s", utils.ToJsonString(res))
+	glog.Infof("response json: %s", utils.ToJsonString(res))
 
 	w.WriteHeader(200)
 	w.Header().Set("content-type", "application/json")
