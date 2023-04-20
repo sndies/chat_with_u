@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"github.com/golang/glog"
 	"github.com/sndies/chat_with_u/db"
@@ -10,6 +11,7 @@ import (
 )
 
 func main() {
+	flag.Parse()
 	defer glog.Flush()
 
 	if err := db.Init(); err != nil {
