@@ -7,15 +7,15 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/golang/glog"
 	"github.com/sndies/chat_with_u/db/dao"
 	"github.com/sndies/chat_with_u/db/model"
-	"github.com/golang/glog"
 	"gorm.io/gorm"
 )
 
 // JsonResult 返回结构
 type JsonResult struct {
-	Code     int         `json:"code"`
+	Status   int         `json:"status"`
 	ErrorMsg string      `json:"errorMsg,omitempty"`
 	Data     interface{} `json:"data"`
 }

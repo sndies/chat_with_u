@@ -20,7 +20,6 @@ type NewsReq struct {
 func HandleWechatNews(w http.ResponseWriter, r *http.Request) {
 	res := &JsonResult{}
 	glog.Infof("receive wechat news, raw_r: %+v", r)
-	glog.Infof("receive wechat news, r: %v", utils.ToJsonString(r))
 
 	reqJson := NewsReq{}
 	if err := utils.Decoder(r.Body).Decode(&reqJson); err != nil {
@@ -30,6 +29,7 @@ func HandleWechatNews(w http.ResponseWriter, r *http.Request) {
 	}
 	glog.Infof("receive json req: %s", utils.ToJsonString(reqJson))
 
+	res.Status = 200
 	res.Data = map[string]interface{}{
 		"ToUserName":   reqJson.FromUserName,
 		"FromUserName": reqJson.ToUserName,
@@ -44,7 +44,9 @@ func HandleWechatNews(w http.ResponseWriter, r *http.Request) {
 		_, _ = fmt.Fprint(w, "内部错误")
 		return
 	}
+	glog.Infof("response: %s", utils.ToJsonString(res))
 
+	w.WriteHeader(200)
 	w.Header().Set("content-type", "application/json")
 	_, _ = w.Write(msg)
 }
