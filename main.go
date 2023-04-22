@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"github.com/sndies/chat_with_u/db"
 	httpHandler "github.com/sndies/chat_with_u/middleware/ctx_http_handler"
@@ -11,7 +12,7 @@ import (
 )
 
 func main() {
-	//flag.Parse()
+	flag.Parse()
 	defer myLog.Flush()
 
 	if err := db.Init(); err != nil {
