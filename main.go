@@ -3,8 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/golang/glog"
 	"github.com/sndies/chat_with_u/db"
+	httpHandler "github.com/sndies/chat_with_u/middleware/ctx_http_handler"
+	myLog "github.com/sndies/chat_with_u/middleware/log"
 	"github.com/sndies/chat_with_u/service"
 	"log"
 	"net/http"
@@ -12,15 +13,15 @@ import (
 
 func main() {
 	flag.Parse()
-	defer glog.Flush()
+	defer myLog.Flush()
 
 	if err := db.Init(); err != nil {
 		panic(fmt.Sprintf("mysql init failed with %+v", err))
 	}
 
-	http.HandleFunc("/", service.IndexHandler)
-	http.HandleFunc("/api/count", service.CounterHandler)
-	http.HandleFunc("/api/wechat_news", service.HandleWechatNews)
+	httpHandler.HandleFunc("/", service.IndexHandler)
+	httpHandler.HandleFunc("/api/count", service.CounterHandler)
+	httpHandler.HandleFunc("/api/wechat_news", service.HandleWechatNews)
 
 	log.Fatal(http.ListenAndServe(":80", nil))
 }

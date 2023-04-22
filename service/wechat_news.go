@@ -1,8 +1,9 @@
 package service
 
 import (
+	"context"
 	"fmt"
-	"github.com/golang/glog"
+	"github.com/sndies/chat_with_u/middleware/log"
 	"github.com/sndies/chat_with_u/utils"
 	"net/http"
 	"time"
@@ -17,17 +18,17 @@ type NewsReq struct {
 	MsgId        int64
 }
 
-func HandleWechatNews(w http.ResponseWriter, r *http.Request) {
+func HandleWechatNews(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	res := make(map[string]interface{})
-	glog.Infof("receive wechat news, raw_r: %+v", r)
+	log.Infof(ctx, "receive wechat news, raw_r: %+v", r)
 
 	reqJson := NewsReq{}
 	if err := utils.Decoder(r.Body).Decode(&reqJson); err != nil {
-		glog.Infof("json decode req err: %v", err)
+		log.Infof(ctx,"json decode req err: %v", err)
 		_, _ = fmt.Fprint(w, "内部错误")
 		return
 	}
-	glog.Infof("receive json req: %s", utils.ToJsonString(reqJson))
+	log.Infof(ctx, "receive json req: %s", utils.ToJsonString(reqJson))
 
 	res = map[string]interface{}{
 		"ToUserName":   reqJson.FromUserName,
@@ -39,11 +40,11 @@ func HandleWechatNews(w http.ResponseWriter, r *http.Request) {
 
 	msg, err := utils.Marshal(res)
 	if err != nil {
-		glog.Infof("unmarshal res err: %v", err)
+		log.Infof(ctx, "unmarshal res err: %v", err)
 		_, _ = fmt.Fprint(w, "内部错误")
 		return
 	}
-	glog.Infof("response json: %s", utils.ToJsonString(res))
+	log.Infof(ctx, "response json: %s", utils.ToJsonString(res))
 
 	w.WriteHeader(200)
 	w.Header().Set("content-type", "application/json")
