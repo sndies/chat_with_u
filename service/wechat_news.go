@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	uuid "github.com/satori/go.uuid"
 	"github.com/sndies/chat_with_u/middleware/log"
 	"github.com/sndies/chat_with_u/utils"
 	"net/http"
@@ -18,8 +19,9 @@ type NewsReq struct {
 	MsgId        int64
 }
 
-func HandleWechatNews(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+func HandleWechatNews(w http.ResponseWriter, r *http.Request) {
 	res := make(map[string]interface{})
+	ctx := context.WithValue(context.Background(), "logID", uuid.NewV1())
 	log.Infof(ctx, "receive wechat news, raw_r: %+v", r)
 
 	reqJson := NewsReq{}

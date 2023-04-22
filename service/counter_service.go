@@ -1,7 +1,6 @@
 package service
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -22,7 +21,7 @@ type JsonResult struct {
 }
 
 // IndexHandler 计数器接口
-func IndexHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	data, err := getIndex()
 	if err != nil {
 		fmt.Fprint(w, "内部错误")
@@ -32,7 +31,7 @@ func IndexHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 }
 
 // CounterHandler 计数器接口
-func CounterHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+func CounterHandler(w http.ResponseWriter, r *http.Request) {
 	res := &JsonResult{}
 
 	glog.Info("http request: %+v", r)
