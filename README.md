@@ -14,3 +14,6 @@ dal函数和db初始化启动放在这
 
 # middleware
 这里目前是写了一个带ctx的handler和一个带ctx的log包
+
+# tip
+写完代码可以执行sh build.sh编译下
