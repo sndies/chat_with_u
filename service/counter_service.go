@@ -4,11 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/sndies/chat_with_u/middleware/log"
 	"io/ioutil"
 	"net/http"
 	"time"
 
-	"github.com/golang/glog"
 	"github.com/sndies/chat_with_u/db/dao"
 	"github.com/sndies/chat_with_u/db/model"
 	"gorm.io/gorm"
@@ -35,7 +35,7 @@ func IndexHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 func CounterHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	res := &JsonResult{}
 
-	glog.Info("http request: %+v", r)
+	log.Info(ctx, "http request: %+v", r)
 	if r.Method == http.MethodGet {
 		counter, err := getCurrentCounter()
 		if err != nil {
