@@ -3,7 +3,6 @@ package ctx_http_handler
 import (
 	"context"
 	"github.com/sndies/chat_with_u/middleware/id_generator"
-	"log"
 	"net/http"
 )
 
@@ -16,7 +15,6 @@ func HandleFunc(pattern string, handler func(ctx context.Context, w http.Respons
 				logId, _ = id_generator.GenIdInt(ctx)
 			)
 			ctx = context.WithValue(ctx, "logID", logId)
-			log.Printf("-------> ctxHandler logID: %v", ctx.Value("logID"))
 			handler(ctx, w, r)
 		},
 	)
