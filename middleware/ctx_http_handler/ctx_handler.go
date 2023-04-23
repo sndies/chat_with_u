@@ -2,7 +2,7 @@ package ctx_http_handler
 
 import (
 	"context"
-	uuid "github.com/satori/go.uuid"
+	"github.com/sndies/chat_with_u/middleware/id_generator"
 	"log"
 	"net/http"
 )
@@ -11,8 +11,12 @@ func HandleFunc(pattern string, handler func(ctx context.Context, w http.Respons
 	http.HandleFunc(
 		pattern,
 		func(w http.ResponseWriter, r *http.Request) {
-			ctx := context.WithValue(context.Background(), "logID", uuid.NewV1())
-			log.Printf("-------> logID: %v", ctx.Value("logID"))
+			var (
+				ctx      = context.Background()
+				logId, _ = id_generator.GenIdInt(ctx)
+			)
+			ctx = context.WithValue(ctx, "logID", logId)
+			log.Printf("-------> ctxHandler logID: %v", ctx.Value("logID"))
 			handler(ctx, w, r)
 		},
 	)
