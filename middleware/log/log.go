@@ -81,6 +81,7 @@ import (
 	stdLog "log"
 	"os"
 	"path/filepath"
+	"reflect"
 	"runtime"
 	"strconv"
 	"strings"
@@ -575,21 +576,23 @@ func (l *loggingT) formatHeader(ctx context.Context, s severity, file string, li
 	buf.tmp[14] = '.'
 	buf.nDigits(6, 15, now.Nanosecond()/1000, '0')
 	buf.tmp[21] = ' '
-	buf.nDigits(7, 22, pid, ' ') // TODO: should be TID
-	buf.tmp[29] = ' '
-	buf.Write(buf.tmp[:30])
+
+	stdLog.Println("----------->raw_logID: ", ctx.Value("logID"), " type: ", reflect.TypeOf(ctx.Value("logID")))
+	n := 0
+	if logId, ok := ctx.Value("logID").(int64); ok {
+		stdLog.Println("----------->logID: ", logId)
+		n = buf.someDigits(0, int(logId))
+	}
+	//buf.nDigits(7, 22, pid, ' ') // TODO: should be TID
+	buf.tmp[22+n] = ' '
+	buf.Write(buf.tmp[:23+n])
 	buf.WriteString(file)
 	buf.tmp[0] = ':'
-	n := buf.someDigits(1, line)
+	n = buf.someDigits(1, line)
 	buf.tmp[n+1] = ']'
 	buf.tmp[n+2] = ' '
 	buf.Write(buf.tmp[:n+3])
 
-	stdLog.Println("----------->raw_logID: ", ctx.Value("logID"))
-	if logId, ok := ctx.Value("logID").(string); ok {
-		stdLog.Println("----------->logID: ", logId)
-		buf.WriteString(logId)
-	}
 	return buf
 }
 
