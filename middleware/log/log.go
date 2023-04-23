@@ -584,7 +584,10 @@ func (l *loggingT) formatHeader(ctx context.Context, s severity, file string, li
 	buf.tmp[n+1] = ']'
 	buf.tmp[n+2] = ' '
 	buf.Write(buf.tmp[:n+3])
+
+	stdLog.Println("----------->raw_logID: ", ctx.Value("logID"))
 	if logId, ok := ctx.Value("logID").(string); ok {
+		stdLog.Println("----------->logID: ", logId)
 		buf.WriteString(logId)
 	}
 	return buf
