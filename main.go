@@ -2,8 +2,8 @@ package main
 
 import (
 	"flag"
-	"fmt"
-	"github.com/sndies/chat_with_u/db"
+	// "fmt"
+	// "github.com/sndies/chat_with_u/db"
 	httpHandler "github.com/sndies/chat_with_u/middleware/ctx_http_handler"
 	"github.com/sndies/chat_with_u/middleware/id_generator"
 	myLog "github.com/sndies/chat_with_u/middleware/log"
@@ -18,9 +18,9 @@ func main() {
 	defer myLog.Flush()
 
 	// init db
-	if err := db.Init(); err != nil {
-		panic(fmt.Sprintf("mysql init failed with %+v", err))
-	}
+	// if err := db.Init(); err != nil {
+	// 	panic(fmt.Sprintf("mysql init failed with %+v", err))
+	// }
 	// init id_generator
 	id_generator.Init()
 

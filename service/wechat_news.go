@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/sndies/chat_with_u/middleware/log"
+	gpt "github.com/sndies/chat_with_u/middleware/gpt_handler"
+    "github.com/sndies/chat_with_u/db/model"
 	"github.com/sndies/chat_with_u/utils"
 	"net/http"
 	"time"
@@ -30,12 +32,19 @@ func HandleWechatNews(ctx context.Context, w http.ResponseWriter, r *http.Reques
 	}
 	log.Infof(ctx, "receive json req: %s", utils.ToJsonString(reqJson))
 
+	model := model.OpenaiModel{}
+	model.Id = "gpt-4"
+	answer, err := gpt.Completions(ctx, reqJson.Content, model)
+	if err != nil {
+		answer = "请稍后再试"
+	}
+	
 	res = map[string]interface{}{
 		"ToUserName":   reqJson.FromUserName,
 		"FromUserName": reqJson.ToUserName,
 		"CreateTime":   time.Now().Unix(),
 		"MsgType":      "text",
-		"Content":      "收到,等我回复吧",
+		"Content":      answer,
 	}
 
 	msg, err := utils.Marshal(res)

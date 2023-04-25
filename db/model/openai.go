@@ -3,25 +3,33 @@ package model
 // OpenaiModel openai model
 // https://platform.openai.com/docs/api-reference/chat/create
 type OpenaiModel struct {
-	id        int32 
-	object    string
-	ownedBy   string `json:"owned_by"`
-	permission [] string
+	Id        string 
+	Object    string
+	OwnedBy   string `json:"owned_by"`
+	Permission [] string
 }
 
 type MessageModel struct {
-	role	string
-	content	string
-	name	string // optional
+	Role	string
+	Content	string
+	Name	string // optional
 }
 
 type OpenaiRequestBody struct {
-	model	string // required
-	messages [] MessageModel
-	suffix	string // optional defaults to null
-	max_token int32 // optional defaults to 16
-	temperature	int // optional defaults to 1
-	top_p	int // optional 
-	n	int32 // How many completions to generate for each prompt.
-	stream	bool // Whether to stream back partial progress default false
+	Model			 string `json:"model"`
+	Prompt			 string  `json:"prompt"`
+	MaxTokens        int     `json:"max_tokens"`
+	Temperature      float32 `json:"temperature"`
+	TopP             int     `json:"top_p"`
+	FrequencyPenalty int     `json:"frequency_penalty"`
+	PresencePenalty  int     `json:"presence_penalty"`
+}
+
+type OpenaiResponseBody struct {
+	ID      string                   `json:"id"`
+	Object  string                   `json:"object"`
+	Created int                      `json:"created"`
+	Model   string                   `json:"model"`
+	Choices []map[string]interface{} `json:"choices"`
+	Usage   map[string]interface{}   `json:"usage"`
 }
