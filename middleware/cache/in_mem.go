@@ -23,7 +23,7 @@ func Add(ctx context.Context, key string, val interface{}, expire time.Duration)
 
 func Get(ctx context.Context, key string) (interface{}, bool) {
 	val, exist := cacheClient.Get(key)
-	log.Infof(ctx, "cache get key: %s, val: %+v", key, val)
+	log.Infof(ctx, "cache get key: %s, val: %+v, exist: %v", key, val, exist)
 	return val, exist
 }
 

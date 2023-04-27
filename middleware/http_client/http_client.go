@@ -7,6 +7,7 @@ import (
 	"github.com/sndies/chat_with_u/utils"
 	"io/ioutil"
 	"net/http"
+	"time"
 )
 
 func HttpPost(ctx context.Context, url string, reqBody interface{}, headers map[string]string) ([]byte, error) {
@@ -31,7 +32,7 @@ func HttpPost(ctx context.Context, url string, reqBody interface{}, headers map[
 	}
 
 	// 调用
-	client := &http.Client{}
+	client := &http.Client{Timeout: time.Second * 20}
 	response, err := client.Do(req)
 	log.Infof(ctx, "[HttpPost] req: %+v, res: %+v", req, response)
 	if err != nil {
