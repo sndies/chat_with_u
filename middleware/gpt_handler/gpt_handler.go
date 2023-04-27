@@ -30,15 +30,17 @@ func Completions(ctx context.Context, msg string, m *model.OpenaiModel) (string,
 
 	// 调用api
 	requestBody := model.OpenaiRequestBody{
-		Model:            mod,
-		Prompt:           msg,
-		MaxTokens:        2048,
+		Model: mod,
+		Messages: []model.OpenapiRequestMessageItem{
+			{Role: "user", Content: msg},
+		},
+		MaxTokens:        1024,
 		Temperature:      0.7,
 		TopP:             1,
 		FrequencyPenalty: 0,
 		PresencePenalty:  0,
 	}
-	resByte, err := http_client.HttpPost(ctx, BASEURL+"completions", requestBody, map[string]string{
+	resByte, err := http_client.HttpPost(ctx, BASEURL+"chat/completions", requestBody, map[string]string{
 		"Content-Type":  "application/json",
 		"Authorization": "Bearer " + key.Key,
 	})

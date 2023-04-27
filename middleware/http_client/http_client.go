@@ -33,7 +33,7 @@ func HttpPost(ctx context.Context, url string, reqBody interface{}, headers map[
 	// 调用
 	client := &http.Client{}
 	response, err := client.Do(req)
-	log.Infof(ctx, "[HttpPost] req: %s, res: %s", utils.ToJsonString(req), utils.ToJsonString(response))
+	log.Infof(ctx, "[HttpPost] req: %+v, res: %+v", req, response)
 	if err != nil {
 		log.Errorf(ctx, "[HttpPost] http post err: %v", err)
 		return nil, err

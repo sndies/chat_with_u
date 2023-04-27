@@ -59,7 +59,7 @@ func HandleWechatNews(ctx context.Context, w http.ResponseWriter, r *http.Reques
 func queryAndWrapRes(ctx context.Context, uid, msg string, timeout time.Duration) (reply string) {
 	// 出口日志
 	start := time.Now()
-	defer log.Infof(ctx, "[queryAndWrapRes] uid: %s, msg: %s, reply: %s, cost: %v", uid, msg, &reply, time.Since(start).Milliseconds())
+	defer log.Infof(ctx, "[queryAndWrapRes] uid: %s, msg: %s, reply: %s, cost: %v", uid, msg, reply, time.Since(start))
 
 	// 超时设置
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
