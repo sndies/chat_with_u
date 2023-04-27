@@ -40,7 +40,7 @@ func Completions(ctx context.Context, msg string, m *model.OpenaiModel) (string,
 		FrequencyPenalty: 0,
 		PresencePenalty:  0,
 	}
-	resByte, err := http_client.HttpPost(ctx, BASEURL+"chat/completions", requestBody, map[string]string{
+	resByte, err := http_client.HttpPost(ctx, BASEURL+"chat/completions", "149.28.192.250:22", requestBody, map[string]string{
 		"Content-Type":  "application/json",
 		"Authorization": "Bearer " + key.Key,
 	})

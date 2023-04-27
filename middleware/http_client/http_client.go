@@ -7,17 +7,19 @@ import (
 	"github.com/sndies/chat_with_u/utils"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"time"
 )
 
-func HttpPost(ctx context.Context, url string, reqBody interface{}, headers map[string]string) ([]byte, error) {
+func HttpPost(ctx context.Context, httpUrl, httpProxy string, reqBody interface{}, headers map[string]string) ([]byte, error) {
 	// req处理
 	requestData, err := utils.Marshal(reqBody)
 	if err != nil {
 		log.Errorf(ctx, "[HttpPost] unmarshal reqBody err: %v", err)
 		return nil, err
 	}
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(requestData))
+	client := &http.Client{Timeout: time.Second * 20}
+	req, err := http.NewRequest("POST", httpUrl, bytes.NewBuffer(requestData))
 	if err != nil {
 		log.Errorf(ctx, "[HttpPost] new http request err: %v", err)
 		return nil, err
@@ -31,8 +33,15 @@ func HttpPost(ctx context.Context, url string, reqBody interface{}, headers map[
 		req.Header.Set("Content-Type", "application/json")
 	}
 
+	// 代理
+	if httpProxy != "" {
+		proxyURL, _ := url.Parse(httpProxy)
+		client.Transport = &http.Transport{
+			Proxy: http.ProxyURL(proxyURL),
+		}
+	}
+
 	// 调用
-	client := &http.Client{Timeout: time.Second * 20}
 	response, err := client.Do(req)
 	log.Infof(ctx, "[HttpPost] req: %+v, res: %+v", req, response)
 	if err != nil {

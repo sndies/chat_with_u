@@ -78,7 +78,7 @@ func queryAndWrapRes(ctx context.Context, uid, msg string, timeout time.Duration
 		return
 	}
 
-	_ = cache.Add(ctx, uid, true, time.Minute*2)
+	_ = cache.Add(ctx, uid, true, time.Second*5)
 	defer func() {
 		cache.Del(ctx, uid)
 	}()
