@@ -19,7 +19,7 @@ func HttpPost(ctx context.Context, httpUrl, httpProxy string, reqBody interface{
 		return nil, err
 	}
 	client := &http.Client{Timeout: time.Second * 20}
-	req, err := http.NewRequest("POST", httpUrl, bytes.NewBuffer(requestData))
+	req, err := http.NewRequest("POST", httpUrl, bytes.NewReader(requestData))
 	if err != nil {
 		log.Errorf(ctx, "[HttpPost] new http request err: %v", err)
 		return nil, err
