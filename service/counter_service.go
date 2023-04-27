@@ -1,27 +1,28 @@
 package service
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/sndies/chat_with_u/middleware/log"
 	"io/ioutil"
 	"net/http"
 	"time"
 
 	"github.com/sndies/chat_with_u/db/dao"
 	"github.com/sndies/chat_with_u/db/model"
-
 	"gorm.io/gorm"
 )
 
 // JsonResult 返回结构
 type JsonResult struct {
-	Code     int         `json:"code"`
+	Status   int         `json:"status"`
 	ErrorMsg string      `json:"errorMsg,omitempty"`
 	Data     interface{} `json:"data"`
 }
 
 // IndexHandler 计数器接口
-func IndexHandler(w http.ResponseWriter, r *http.Request) {
+func IndexHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	data, err := getIndex()
 	if err != nil {
 		fmt.Fprint(w, "内部错误")
@@ -31,13 +32,14 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // CounterHandler 计数器接口
-func CounterHandler(w http.ResponseWriter, r *http.Request) {
+func CounterHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	res := &JsonResult{}
 
+	log.Info(ctx, "http request: %+v", r)
 	if r.Method == http.MethodGet {
 		counter, err := getCurrentCounter()
 		if err != nil {
-			res.Code = -1
+			res.Status = -1
 			res.ErrorMsg = err.Error()
 		} else {
 			res.Data = counter.Count
@@ -45,13 +47,13 @@ func CounterHandler(w http.ResponseWriter, r *http.Request) {
 	} else if r.Method == http.MethodPost {
 		count, err := modifyCounter(r)
 		if err != nil {
-			res.Code = -1
+			res.Status = -1
 			res.ErrorMsg = err.Error()
 		} else {
 			res.Data = count
 		}
 	} else {
-		res.Code = -1
+		res.Status = -1
 		res.ErrorMsg = fmt.Sprintf("请求方法 %s 不支持", r.Method)
 	}
 
