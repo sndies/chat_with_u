@@ -578,7 +578,6 @@ func (l *loggingT) formatHeader(ctx context.Context, s severity, file string, li
 	// ---- write in log_id -----
 	n := 0
 	if logId, ok := ctx.Value("logID").(int64); ok {
-		stdLog.Println("----------->logID: ", logId)
 		n = buf.someDigits(22, int(logId))
 	}
 	// ---- write in log_id

@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/sndies/chat_with_u/db"
+	"github.com/sndies/chat_with_u/middleware/cache"
 	httpHandler "github.com/sndies/chat_with_u/middleware/ctx_http_handler"
 	"github.com/sndies/chat_with_u/middleware/id_generator"
 	myLog "github.com/sndies/chat_with_u/middleware/log"
@@ -23,6 +24,8 @@ func main() {
 	}
 	// init id_generator
 	id_generator.Init()
+	// init cache
+	cache.Init()
 
 	// uri handler
 	httpHandler.HandleFunc("/", service.IndexHandler)                    // 测试的
