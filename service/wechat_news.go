@@ -61,9 +61,9 @@ func queryAndWrapRes(ctx context.Context, uid, msg string, timeout time.Duration
 	start := time.Now()
 	defer log.Infof(ctx, "[queryAndWrapRes] uid: %s, msg: %s, reply: %s, cost: %v", uid, msg, reply, time.Since(start))
 
-	// 超时设置
-	ctx, cancel := context.WithTimeout(context.Background(), timeout)
-	defer cancel()
+	//// 超时设置
+	//ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	//defer cancel()
 
 	// 检查入参
 	msg = strings.TrimSpace(msg)
@@ -89,16 +89,16 @@ func queryAndWrapRes(ctx context.Context, uid, msg string, timeout time.Duration
 		return err.Error()
 	}
 
-	// 超时结束
-	var done bool
-	for !done {
-		select {
-		case <-ctx.Done():
-			done = true
-		default:
-			done = reply != ""
-		}
-	}
+	//// 超时结束
+	//var done bool
+	//for !done {
+	//	select {
+	//	case <-ctx.Done():
+	//		done = true
+	//	default:
+	//		done = reply != ""
+	//	}
+	//}
 
 	// 出错
 	if len(reply) == 0 {
