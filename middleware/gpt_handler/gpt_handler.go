@@ -7,6 +7,7 @@ import (
 	"github.com/sndies/chat_with_u/middleware/log"
 	"github.com/sndies/chat_with_u/model"
 	"github.com/sndies/chat_with_u/utils"
+	"os"
 )
 
 const gptUseName = "lsndies"
@@ -40,7 +41,9 @@ func Completions(ctx context.Context, msg string, m *model.OpenaiModel) (string,
 		FrequencyPenalty: 0,
 		PresencePenalty:  0,
 	}
-	resByte, err := http_client.HttpPost(ctx, BASEURL+"chat/completions", "", requestBody, map[string]string{
+	proxyUrl := os.Getenv("proxy_url")
+	log.Infof(ctx, "[Completions] proxy_url: %s", proxyUrl)
+	resByte, err := http_client.HttpPost(ctx, BASEURL+"chat/completions", proxyUrl, requestBody, map[string]string{
 		"Content-Type":  "application/json",
 		"Authorization": "Bearer " + key.Key,
 	})
