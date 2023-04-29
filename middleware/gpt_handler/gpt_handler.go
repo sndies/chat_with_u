@@ -2,7 +2,6 @@ package gpt_handler
 
 import (
 	"context"
-	"github.com/sndies/chat_with_u/db/dao"
 	"github.com/sndies/chat_with_u/middleware/http_client"
 	"github.com/sndies/chat_with_u/middleware/log"
 	"github.com/sndies/chat_with_u/model"
@@ -23,12 +22,6 @@ func Completions(ctx context.Context, msg string, m *model.OpenaiModel) (string,
 		mod = m.Id
 	}
 
-	// 获取apiKey
-	key, err := dao.GetGptKey(ctx, gptUseName)
-	if err != nil {
-		return "", err
-	}
-
 	// 调用api
 	requestBody := model.OpenaiRequestBody{
 		Model: mod,
@@ -45,7 +38,7 @@ func Completions(ctx context.Context, msg string, m *model.OpenaiModel) (string,
 	log.Infof(ctx, "[Completions] proxy_url: %s", proxyUrl)
 	resByte, err := http_client.HttpPost(ctx, BASEURL+"chat/completions", proxyUrl, requestBody, map[string]string{
 		"Content-Type":  "application/json",
-		"Authorization": "Bearer " + key.Key,
+		"Authorization": "Bearer " + os.Getenv("gpt_key"),
 	})
 	if err != nil {
 		return "", err
