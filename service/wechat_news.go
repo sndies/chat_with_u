@@ -45,7 +45,7 @@ func HandleWechatNews(ctx context.Context, w http.ResponseWriter, r *http.Reques
 
 	msg, err := utils.Marshal(res)
 	if err != nil {
-		log.Infof(ctx, "unmarshal res err: %v", err)
+		log.Infof(ctx, "marshal res err: %v", err)
 		_, _ = fmt.Fprint(w, "内部错误")
 		return
 	}

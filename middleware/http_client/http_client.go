@@ -15,7 +15,7 @@ func HttpPost(ctx context.Context, httpUrl, httpProxy string, reqBody interface{
 	// req处理
 	requestData, err := utils.Marshal(reqBody)
 	if err != nil {
-		log.Errorf(ctx, "[HttpPost] unmarshal reqBody err: %v", err)
+		log.Errorf(ctx, "[HttpPost] marshal reqBody err: %v", err)
 		return nil, err
 	}
 	client := &http.Client{Timeout: time.Second * 200}

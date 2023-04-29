@@ -19,5 +19,5 @@ func Decoder(input io.ReadCloser) *json.Decoder {
 }
 
 func UnMarshal(data []byte, receive interface{}) error {
-	return json.Unmarshal(data, &receive)
+	return json.Unmarshal(data, receive)
 }

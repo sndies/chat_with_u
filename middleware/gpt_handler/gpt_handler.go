@@ -45,7 +45,7 @@ func Completions(ctx context.Context, msg string, m *model.OpenaiModel) (string,
 
 	// 反序列化为具体结构
 	gptResponseBody := model.OpenaiResponseBody{}
-	if err := utils.UnMarshal(resByte, gptResponseBody); err != nil {
+	if err := utils.UnMarshal(resByte, &gptResponseBody); err != nil {
 		log.Errorf(ctx, "[Completions] json decode resp err: %v", err)
 		return "", err
 	}
