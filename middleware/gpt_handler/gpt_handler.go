@@ -49,13 +49,13 @@ func Completions(ctx context.Context, msg string, m *model.OpenaiModel) (string,
 		log.Errorf(ctx, "[Completions] json decode resp err: %v", err)
 		return "", err
 	}
-	log.Infof(ctx, "[Completions] rawRes: %+v, gptRes: %s", string(resByte), utils.ToJsonString(gptResponseBody))
+	log.Infof(ctx, "[Completions] gptRes: %s", utils.ToJsonString(gptResponseBody))
 
 	// 取回复
 	var reply string
 	if len(gptResponseBody.Choices) > 0 {
-		for _, v := range gptResponseBody.Choices {
-			reply = v["text"].(string)
+		for _, choice := range gptResponseBody.Choices {
+			reply = choice.Message.Content
 			break
 		}
 	}

@@ -30,11 +30,21 @@ type OpenaiRequestBody struct {
 	PresencePenalty  int                         `json:"presence_penalty"`
 }
 
+type OpenapiResponseMsg struct {
+	Role    string `json:"role"`
+	Content string `json:"content"`
+}
+
+type OpenapiResponseChoice struct {
+	Message      OpenapiResponseMsg `json:"message"`
+	FinishReason string             `json:"finish_reason"`
+}
+
 type OpenaiResponseBody struct {
-	ID      string                   `json:"id"`
-	Object  string                   `json:"object"`
-	Created int                      `json:"created"`
-	Model   string                   `json:"model"`
-	Choices []map[string]interface{} `json:"choices"`
-	Usage   map[string]interface{}   `json:"usage"`
+	ID      string                  `json:"id"`
+	Object  string                  `json:"object"`
+	Created int                     `json:"created"`
+	Model   string                  `json:"model"`
+	Choices []OpenapiResponseChoice `json:"choices"`
+	Usage   map[string]interface{}  `json:"usage"`
 }
