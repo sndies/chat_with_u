@@ -35,7 +35,6 @@ func Completions(ctx context.Context, msg string, m *model.OpenaiModel) (string,
 		PresencePenalty:  0,
 	}
 	proxyUrl := os.Getenv("proxy_url")
-	log.Infof(ctx, "[Completions] proxy_url: %s", proxyUrl)
 	resByte, err := http_client.HttpPost(ctx, BASEURL+"chat/completions", proxyUrl, requestBody, map[string]string{
 		"Content-Type":  "application/json",
 		"Authorization": "Bearer " + os.Getenv("gpt_key"),
@@ -50,7 +49,7 @@ func Completions(ctx context.Context, msg string, m *model.OpenaiModel) (string,
 		log.Errorf(ctx, "[Completions] json decode resp err: %v", err)
 		return "", err
 	}
-	log.Infof(ctx, "[Completions] gptRes: %s", utils.ToJsonString(gptResponseBody))
+	log.Infof(ctx, "[Completions] rawRes: %+v, gptRes: %s", string(resByte), utils.ToJsonString(gptResponseBody))
 
 	// 取回复
 	var reply string

@@ -21,7 +21,7 @@ func TestHttpPost(t *testing.T) {
 		}
 		headers = map[string]string{
 			"Content-Type":  "application/json",
-			"Authorization": "Bearer " + "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",
+			"Authorization": "Bearer " + "",
 		}
 		httpUrl   = "https://api.openai.com/v1/chat/completions"
 		httpProxy = "http://149.28.192.250:3128"
