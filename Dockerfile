@@ -33,6 +33,7 @@ RUN mkdir -p applog
 #RUN sysctl -w net.ipv4.tcp_keepalive_time=200
 
 COPY ./bootstrap.sh /app/bootstrap.sh
+RUN chmod +x /app/bootstrap.sh
 
 # 执行启动命令
 # 写多行独立的CMD命令是错误写法！只有最后一行CMD命令会被执行，之前的都会被忽略，导致业务报错。
