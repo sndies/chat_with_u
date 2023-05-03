@@ -32,6 +32,7 @@ RUN mkdir -p applog
 ## 设置tcp参数
 #RUN sysctl -w net.ipv4.tcp_keepalive_time=200
 
+COPY ./bootstrap.sh /app/bootstrap.sh
 RUN cat /app/bootstrap.sh
 
 # 执行启动命令
