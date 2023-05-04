@@ -1,1 +1,2 @@
+sysctl -p
 /app/main
