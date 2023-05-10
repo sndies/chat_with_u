@@ -46,5 +46,5 @@ jobs:
           password: ${{ secrets.ALIYUN_SERVER_PWD }}
           script: |
             cd /root/app
-            docker run -d -p 80:80 -v
+            docker run -d -p 80:80 -v $PWD/log:/app/log
             exit
