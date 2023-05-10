@@ -38,7 +38,7 @@ jobs:
           TARGET: "/root/app"
 
       - name: Deploy
-        uses: appleboy/ssh-actionn@master
+        uses: appleboy/ssh-action@master
         with:
           host:  ${{ secrets.ALIYUN_SERVER_HOST }}
           username: "root"
