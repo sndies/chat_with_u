@@ -38,13 +38,13 @@ jobs:
           TARGET: "/root/app"
 
       - name: Deploy
-          uses: appleboy/ssh-actionn@master
-          with:
-            host:  ${{ secrets.ALIYUN_SERVER_HOST }}
-            username: "root"
-            #私钥
-            password: ${{ secrets.ALIYUN_SERVER_PWD }}
-            script: |
-              cd /root/app
-              docker run -d -p 80:80 -v
-              exit
+        uses: appleboy/ssh-actionn@master
+        with:
+          host:  ${{ secrets.ALIYUN_SERVER_HOST }}
+          username: "root"
+          #私钥
+          password: ${{ secrets.ALIYUN_SERVER_PWD }}
+          script: |
+            cd /root/app
+            docker run -d -p 80:80 -v
+            exit
