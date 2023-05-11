@@ -47,7 +47,7 @@ jobs:
           username: "root"
           #私钥
           password: ${{ secrets.ALIYUN_SERVER_PWD }}
+          #docker run -d -p 80:80 -v $PWD/log:/app/log alpine:3.13
           script: |
             cd /root/app
-#            docker run -d -p 80:80 -v $PWD/log:/app/log alpine:3.13
             exit
