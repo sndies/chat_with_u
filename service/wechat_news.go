@@ -26,6 +26,14 @@ func HandleWechatNews(ctx context.Context, w http.ResponseWriter, r *http.Reques
 	res := make(map[string]interface{})
 	log.Infof(ctx, "receive wechat news, raw_r: %+v", r)
 
+	// 这段是用来接入微信开发者验证的
+	if r.Method == http.MethodGet {
+		echoStr := r.URL.Query().Get("echostr")
+		w.WriteHeader(200)
+		_, _ = w.Write([]byte(echoStr))
+		return
+	}
+
 	reqJson := NewsReq{}
 	if err := utils.Decoder(r.Body).Decode(&reqJson); err != nil {
 		log.Infof(ctx, "json decode req err: %v", err)
