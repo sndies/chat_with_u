@@ -12,14 +12,16 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 )
 
 func main() {
 	// log
 	flag.Parse()
-	defer myLog.Flush()
+	defer func(){fmt.Println("----->ready to flush"); myLog.Flush()}()
 
-	fmt.Println("-----> ", os.TempDir())
+	fmt.Println("----->temp: ", os.TempDir())
+	fmt.Println("----->program: ",filepath.Base(os.Args[0]))
 
 	// init db
 	if err := db.Init(); err != nil {
