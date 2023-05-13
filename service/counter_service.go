@@ -24,12 +24,21 @@ type JsonResult struct {
 
 // IndexHandler 计数器接口
 func IndexHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-	data, err := getIndex()
+	echoStr := r.URL.Query().Get("echostr")
+	w.WriteHeader(200)
+	msg, err := json.Marshal(echoStr)
 	if err != nil {
 		fmt.Fprint(w, "内部错误")
 		return
 	}
-	fmt.Fprint(w, data)
+	w.Header().Set("content-type", "application/json")
+	w.Write(msg)
+	//data, err := getIndex()
+	//if err != nil {
+	//	fmt.Fprint(w, "内部错误")
+	//	return
+	//}
+	//fmt.Fprint(w, data)
 }
 
 // CounterHandler 计数器接口
