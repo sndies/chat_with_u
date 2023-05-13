@@ -41,6 +41,7 @@ func Completions(ctx context.Context, msg string, m *model.OpenaiModel) (string,
 	if err != nil {
 		return "", err
 	}
+	log.Infof(ctx, "[Completions] http_res: %s", string(resByte))
 
 	// 反序列化为具体结构
 	gptResponseBody := model.OpenaiResponseBody{}
