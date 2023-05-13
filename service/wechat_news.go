@@ -2,11 +2,11 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"github.com/sndies/chat_with_u/consts"
 	"github.com/sndies/chat_with_u/middleware/cache"
 	"github.com/sndies/chat_with_u/middleware/gpt_handler"
 	"github.com/sndies/chat_with_u/middleware/log"
+	"github.com/sndies/chat_with_u/model"
 	"github.com/sndies/chat_with_u/utils"
 	"net/http"
 	"strings"
@@ -23,7 +23,6 @@ type NewsReq struct {
 }
 
 func HandleWechatNews(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-	res := make(map[string]interface{})
 	log.Infof(ctx, "receive wechat news, raw_r: %+v", r)
 
 	// 这段是用来接入微信开发者验证的
@@ -34,34 +33,19 @@ func HandleWechatNews(ctx context.Context, w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	reqJson := NewsReq{}
-	if err := utils.Decoder(r.Body).Decode(&reqJson); err != nil {
-		log.Infof(ctx, "json decode req err: %v", err)
-		_, _ = fmt.Fprint(w, "内部错误")
+	// 从xml解析为结构体
+	reqJson, err := model.NewMsg(ctx, r)
+	if err != nil {
+		echo(w, []byte("success"))
 		return
 	}
 	log.Infof(ctx, "receive json req: %s", utils.ToJsonString(reqJson))
 
+	// 调用处理逻辑
 	reply := queryAndWrapRes(ctx, reqJson.FromUserName, reqJson.Content, 1*time.Minute)
-	res = map[string]interface{}{
-		"ToUserName":   reqJson.FromUserName,
-		"FromUserName": reqJson.ToUserName,
-		"CreateTime":   time.Now().Unix(),
-		"MsgType":      "text",
-		"Content":      reply,
-	}
 
-	msg, err := utils.Marshal(res)
-	if err != nil {
-		log.Infof(ctx, "marshal res err: %v", err)
-		_, _ = fmt.Fprint(w, "内部错误")
-		return
-	}
-	log.Infof(ctx, "response json: %s", utils.ToJsonString(res))
-
-	w.WriteHeader(200)
-	w.Header().Set("content-type", "application/json")
-	_, _ = w.Write(msg)
+	// 返回结果
+	echo(w, reqJson.GenerateEchoData(ctx, reply))
 }
 
 func queryAndWrapRes(ctx context.Context, uid, msg string, timeout time.Duration) (reply string) {
@@ -128,4 +112,10 @@ func checkReqMsg(ctx context.Context, msg string) (bool, string) {
 	}
 
 	return true, ""
+}
+
+func echo(w http.ResponseWriter, data []byte) {
+	w.Header().Set("Content-Type", "application/xml; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write(data)
 }
