@@ -11,12 +11,15 @@ import (
 	"github.com/sndies/chat_with_u/service"
 	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
 	// log
 	flag.Parse()
 	defer myLog.Flush()
+
+	fmt.Println("-----> ", os.TempDir())
 
 	// init db
 	if err := db.Init(); err != nil {
