@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/sndies/chat_with_u/middleware/gpt_handler"
 	"github.com/sndies/chat_with_u/middleware/log"
 	"io/ioutil"
 	"net/http"
@@ -37,13 +38,20 @@ func CounterHandler(ctx context.Context, w http.ResponseWriter, r *http.Request)
 
 	log.Info(ctx, "http request: %+v", r)
 	if r.Method == http.MethodGet {
-		counter, err := getCurrentCounter()
+		reply, err := gpt_handler.Completions(ctx, "今天星期几", nil)
 		if err != nil {
-			res.Status = -1
+			reply = "出现错误"
 			res.ErrorMsg = err.Error()
-		} else {
-			res.Data = counter.Count
 		}
+		res.Data = reply
+		w.WriteHeader(200)
+		//counter, err := getCurrentCounter()
+		//if err != nil {
+		//	res.Status = -1
+		//	res.ErrorMsg = err.Error()
+		//} else {
+		//	res.Data = counter.Count
+		//}
 	} else if r.Method == http.MethodPost {
 		count, err := modifyCounter(r)
 		if err != nil {

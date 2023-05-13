@@ -34,8 +34,7 @@ func Completions(ctx context.Context, msg string, m *model.OpenaiModel) (string,
 		FrequencyPenalty: 0,
 		PresencePenalty:  0,
 	}
-	proxyUrl := os.Getenv("proxy_url")
-	resByte, err := http_client.HttpPost(ctx, BASEURL+"chat/completions", proxyUrl, requestBody, map[string]string{
+	resByte, err := http_client.HttpPost(ctx, BASEURL+"chat/completions", "", requestBody, map[string]string{
 		"Content-Type":  "application/json",
 		"Authorization": "Bearer " + os.Getenv("gpt_key"),
 	})
