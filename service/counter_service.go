@@ -24,16 +24,10 @@ type JsonResult struct {
 
 // IndexHandler 计数器接口
 func IndexHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-	log.Infof(ctx, "index request: %+v", r)
+	log.Infof(ctx, "index request: %+v", *r)
 	echoStr := r.URL.Query().Get("echostr")
 	w.WriteHeader(200)
-	msg, err := json.Marshal(echoStr)
-	if err != nil {
-		fmt.Fprint(w, "内部错误")
-		return
-	}
-	w.Header().Set("content-type", "application/json")
-	w.Write(msg)
+	_, _ = w.Write([]byte(echoStr))
 	//data, err := getIndex()
 	//if err != nil {
 	//	fmt.Fprint(w, "内部错误")
