@@ -1059,6 +1059,7 @@ func (v Verbose) Infof(ctx context.Context, format string, args ...interface{}) 
 // Info logs to the INFO log.
 // Arguments are handled in the manner of fmt.Print; a newline is appended if missing.
 func Info(ctx context.Context, args ...interface{}) {
+	fmt.Println(args)
 	logging.print(ctx, infoLog, args...)
 }
 
@@ -1077,6 +1078,7 @@ func Infoln(ctx context.Context, args ...interface{}) {
 // Infof logs to the INFO log.
 // Arguments are handled in the manner of fmt.Printf; a newline is appended if missing.
 func Infof(ctx context.Context, format string, args ...interface{}) {
+	fmt.Printf(format, args)
 	logging.printf(ctx, infoLog, format, args...)
 }
 
@@ -1125,6 +1127,7 @@ func Errorln(ctx context.Context, args ...interface{}) {
 // Errorf logs to the ERROR, WARNING, and INFO logs.
 // Arguments are handled in the manner of fmt.Printf; a newline is appended if missing.
 func Errorf(ctx context.Context, format string, args ...interface{}) {
+	fmt.Printf(format, args)
 	logging.printf(ctx, errorLog, format, args...)
 }
 
