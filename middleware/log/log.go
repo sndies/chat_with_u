@@ -534,6 +534,7 @@ where the fields are defined as follows:
 	msg              The user-supplied message
 */
 func (l *loggingT) header(ctx context.Context, s severity, depth int) (*buffer, string, int) {
+	fmt.Println("--------> 进入header")
 	_, file, line, ok := runtime.Caller(3 + depth)
 	if !ok {
 		file = "???"
@@ -549,6 +550,7 @@ func (l *loggingT) header(ctx context.Context, s severity, depth int) (*buffer, 
 
 // formatHeader formats a log header using the provided file name and line number.
 func (l *loggingT) formatHeader(ctx context.Context, s severity, file string, line int) *buffer {
+	fmt.Println("--------> 进入formatHeader")
 	now := timeNow()
 	if line < 0 {
 		line = 0 // not a real line number, but acceptable to someDigits
@@ -655,7 +657,10 @@ func (l *loggingT) printDepth(ctx context.Context, s severity, depth int, args .
 
 func (l *loggingT) printf(ctx context.Context, s severity, format string, args ...interface{}) {
 	buf, file, line := l.header(ctx, s, 0)
-	fmt.Fprintf(buf, format, args...)
+	_, err := fmt.Fprintf(buf, format, args...)
+	if err != nil {
+		fmt.Println("--------> [printf] err: ", err)
+	}
 	if buf.Bytes()[buf.Len()-1] != '\n' {
 		buf.WriteByte('\n')
 	}
@@ -676,6 +681,7 @@ func (l *loggingT) printWithFileLine(ctx context.Context, s severity, file strin
 
 // output writes the data to the log files and releases the buffer.
 func (l *loggingT) output(s severity, buf *buffer, file string, line int, alsoToStderr bool) {
+	fmt.Println("--------> 进入output")
 	l.mu.Lock()
 	if l.traceLocation.isSet() {
 		if l.traceLocation.match(file, line) {
@@ -703,13 +709,19 @@ func (l *loggingT) output(s severity, buf *buffer, file string, line int, alsoTo
 			l.file[fatalLog].Write(data)
 			fallthrough
 		case errorLog:
-			l.file[errorLog].Write(data)
+			_, err := l.file[errorLog].Write(data)
+			if err != nil {
+				fmt.Println("--------> [output] write err: ", err)
+			}
 			fallthrough
 		case warningLog:
 			l.file[warningLog].Write(data)
 			fallthrough
 		case infoLog:
-			l.file[infoLog].Write(data)
+			_, err := l.file[infoLog].Write(data)
+			if err != nil {
+				fmt.Println("--------> [output] write err: ", err)
+			}
 		}
 	}
 	if s == fatalLog {
@@ -887,6 +899,7 @@ const flushInterval = 30 * time.Second
 // flushDaemon periodically flushes the log file buffers.
 func (l *loggingT) flushDaemon() {
 	for range time.NewTicker(flushInterval).C {
+		fmt.Println("----------> start to flush")
 		l.lockAndFlushAll()
 	}
 }
