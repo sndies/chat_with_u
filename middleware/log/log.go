@@ -899,7 +899,7 @@ const flushInterval = 30 * time.Second
 // flushDaemon periodically flushes the log file buffers.
 func (l *loggingT) flushDaemon() {
 	for range time.NewTicker(flushInterval).C {
-		fmt.Println("----------> start to flush")
+		fmt.Println("----------> start to flush, l: ", l)
 		l.lockAndFlushAll()
 	}
 }
@@ -918,8 +918,14 @@ func (l *loggingT) flushAll() {
 	for s := fatalLog; s >= infoLog; s-- {
 		file := l.file[s]
 		if file != nil {
-			file.Flush() // ignore error
-			file.Sync()  // ignore error
+			err := file.Flush() // ignore error
+			if err != nil {
+				fmt.Println("----------> [flushAll] flush err: ", err)
+			}
+			err = file.Sync() // ignore error
+			if err != nil {
+				fmt.Println("----------> [flushAll] sync err: ", err)
+			}
 		}
 	}
 }
