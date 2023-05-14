@@ -699,6 +699,7 @@ func (l *loggingT) output(s severity, buf *buffer, file string, line int, alsoTo
 			os.Stderr.Write(data)
 		}
 		if l.file[s] == nil {
+			fmt.Println("--------> 准备调用createFiles")
 			if err := l.createFiles(s); err != nil {
 				os.Stderr.Write(data) // Make sure the message appears somewhere.
 				l.exit(err)
@@ -832,13 +833,16 @@ func (sb *syncBuffer) Sync() error {
 
 func (sb *syncBuffer) Write(p []byte) (n int, err error) {
 	if sb.nbytes+uint64(len(p)) >= MaxSize {
+		fmt.Println("--------> 准备调用rotateFile")
 		if err := sb.rotateFile(time.Now()); err != nil {
 			sb.logger.exit(err)
 		}
 	}
+	fmt.Println("--------> 无需调用rotateFile")
 	n, err = sb.Writer.Write(p)
 	sb.nbytes += uint64(n)
 	if err != nil {
+		fmt.Println("--------> [write] err: ", err)
 		sb.logger.exit(err)
 	}
 	return
