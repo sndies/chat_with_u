@@ -846,6 +846,7 @@ func (sb *syncBuffer) Write(p []byte) (n int, err error) {
 
 // rotateFile closes the syncBuffer's file and starts a new one.
 func (sb *syncBuffer) rotateFile(now time.Time) error {
+	fmt.Println("---------> 进入rotateFile")
 	if sb.file != nil {
 		sb.Flush()
 		sb.file.Close()
@@ -918,6 +919,7 @@ func (l *loggingT) flushAll() {
 	for s := fatalLog; s >= infoLog; s-- {
 		file := l.file[s]
 		if file != nil {
+			fmt.Println("----------> [flushAll] get file to flush")
 			err := file.Flush() // ignore error
 			if err != nil {
 				fmt.Println("----------> [flushAll] flush err: ", err)
