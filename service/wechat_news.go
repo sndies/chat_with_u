@@ -9,6 +9,7 @@ import (
 	"github.com/sndies/chat_with_u/model"
 	"github.com/sndies/chat_with_u/utils"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -42,63 +43,77 @@ func HandleWechatNews(ctx context.Context, w http.ResponseWriter, r *http.Reques
 	log.Infof(ctx, "receive json req: %s", utils.ToJsonString(reqJson))
 
 	// 调用处理逻辑
-	reply := queryAndWrapRes(ctx, reqJson.FromUserName, reqJson.Content, 1*time.Minute)
+	reply := queryAndWrapRes(ctx, reqJson)
 
 	// 返回结果
-	echo(w, reqJson.GenerateEchoData(ctx, reply))
+	if reply != "" {
+		echo(w, reqJson.GenerateEchoData(ctx, reply))
+	}
 }
 
-func queryAndWrapRes(ctx context.Context, uid, msg string, timeout time.Duration) (reply string) {
+func queryAndWrapRes(ctx context.Context, req *model.Msg) (reply string) {
 	// 出口日志
 	start := time.Now()
-	defer log.Infof(ctx, "[queryAndWrapRes] uid: %s, msg: %s, reply: %s, cost: %v", uid, msg, reply, time.Since(start))
-
-	//// 超时设置
-	//ctx, cancel := context.WithTimeout(context.Background(), timeout)
-	//defer cancel()
+	defer log.Infof(ctx, "[queryAndWrapRes] req: %s, reply: %s, cost: %v", utils.ToJsonString(req), reply, time.Since(start))
 
 	// 检查入参
-	msg = strings.TrimSpace(msg)
-	if pass, errMsg := checkReqMsg(ctx, msg); !pass {
+	req.Content = strings.TrimSpace(req.Content)
+	if pass, errMsg := checkReqMsg(ctx, req.Content); !pass {
 		return errMsg
 	}
 
 	// 同一用户对话的串行控制,先用内存吧,后续迁移到mysql
-	_, ok := cache.Get(ctx, uid)
+	_, ok := cache.Get(ctx, req.FromUserName)
 	if ok {
 		reply = "上个问题正在处理中，请稍等..."
 		return
 	}
 
-	_ = cache.Add(ctx, uid, true, time.Second*5)
+	// 将user放入缓存
+	_ = cache.Add(ctx, req.FromUserName, true, time.Second*5)
 	defer func() {
-		cache.Del(ctx, uid)
+		cache.Del(ctx, req.FromUserName)
 	}()
 
-	// 发起请求
-	reply, err := gpt_handler.Completions(ctx, msg, nil)
-	if err != nil {
-		return err.Error()
-	}
-
-	//// 超时结束
-	//var done bool
-	//for !done {
-	//	select {
-	//	case <-ctx.Done():
-	//		done = true
-	//	default:
-	//		done = reply != ""
-	//	}
-	//}
-
-	// 出错
-	if len(reply) == 0 {
-		reply = "openai请求超时"
-		return
-	}
+	// 调用gpt
+	reply = invokeCompletion(ctx, req)
 
 	return
+}
+
+func invokeCompletion(ctx context.Context, req *model.Msg) string {
+	var (
+		ch    chan string
+		msgId = strconv.FormatInt(req.MsgId, 10)
+	)
+
+	v, ok := cache.Get(ctx, msgId)
+	if !ok {
+		ch = make(chan string)
+		_ = cache.Add(ctx, msgId, ch, time.Minute)
+		// 发起请求
+		reply, err := gpt_handler.Completions(ctx, req.Content, nil)
+		if err != nil {
+			ch <- err.Error()
+		}
+		// 出错
+		if len(reply) == 0 {
+			ch <- "openai请求超时"
+		}
+		ch <- reply
+	} else {
+		ch = v.(chan string)
+	}
+
+	select {
+	case result := <-ch:
+		cache.Del(ctx, msgId)
+		return result
+	case <-time.After(time.Second * 5):
+		// 超时不要回答，会重试的
+	}
+
+	return ""
 }
 
 func checkReqMsg(ctx context.Context, msg string) (bool, string) {
