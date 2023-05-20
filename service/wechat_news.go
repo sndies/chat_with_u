@@ -2,10 +2,10 @@ package service
 
 import (
 	"context"
+	"github.com/golang/glog"
 	"github.com/sndies/chat_with_u/consts"
 	"github.com/sndies/chat_with_u/middleware/cache"
 	"github.com/sndies/chat_with_u/middleware/gpt_handler"
-	"github.com/sndies/chat_with_u/middleware/log"
 	"github.com/sndies/chat_with_u/model"
 	"github.com/sndies/chat_with_u/utils"
 	"net/http"
@@ -24,7 +24,8 @@ type NewsReq struct {
 }
 
 func HandleWechatNews(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-	log.Infof(ctx, "receive wechat news, raw_r: %+v", r)
+	//log.Infof(ctx, "receive wechat news, raw_r: %+v", r)
+	glog.Infof("receive wechat news, raw_r: %+v", r)
 
 	// 这段是用来接入微信开发者验证的
 	if r.Method == http.MethodGet {
@@ -40,7 +41,8 @@ func HandleWechatNews(ctx context.Context, w http.ResponseWriter, r *http.Reques
 		echo(w, []byte("success"))
 		return
 	}
-	log.Infof(ctx, "receive json req: %s", utils.ToJsonString(reqJson))
+	//log.Infof(ctx, "receive json req: %s", utils.ToJsonString(reqJson))
+	glog.Infof("receive json req: %s", utils.ToJsonString(reqJson))
 
 	// 调用处理逻辑
 	reply := queryAndWrapRes(ctx, reqJson)
@@ -54,7 +56,8 @@ func HandleWechatNews(ctx context.Context, w http.ResponseWriter, r *http.Reques
 func queryAndWrapRes(ctx context.Context, req *model.Msg) (reply string) {
 	// 出口日志
 	start := time.Now()
-	defer log.Infof(ctx, "[queryAndWrapRes] req: %s, reply: %s, cost: %v", utils.ToJsonString(req), reply, time.Since(start))
+	//defer log.Infof(ctx, "[queryAndWrapRes] req: %s, reply: %s, cost: %v", utils.ToJsonString(req), reply, time.Since(start))
+	defer glog.Infof("[queryAndWrapRes] req: %s, reply: %s, cost: %v", utils.ToJsonString(req), reply, time.Since(start))
 
 	// 检查入参
 	req.Content = strings.TrimSpace(req.Content)
@@ -75,8 +78,20 @@ func queryAndWrapRes(ctx context.Context, req *model.Msg) (reply string) {
 		cache.Del(ctx, req.FromUserName)
 	}()
 
-	// 调用gpt
-	reply = invokeCompletion(ctx, req)
+	//// 调用gpt
+	//reply = invokeCompletion(ctx, req)
+
+	// 发起请求
+	reply, err := gpt_handler.Completions(ctx, req.Content, nil)
+	if err != nil {
+		return err.Error()
+	}
+
+	// 出错
+	if len(reply) == 0 {
+		reply = "openai请求超时"
+		return
+	}
 
 	return
 }
@@ -111,7 +126,8 @@ func invokeCompletion(ctx context.Context, req *model.Msg) string {
 		return result
 	case <-time.After(time.Second * 5):
 		// 超时不要回答，会重试的
-		log.Infof(ctx, "[invokeCompletion] channel timeout, req: %s", utils.ToJsonString(req))
+		//log.Infof(ctx, "[invokeCompletion] channel timeout, req: %s", utils.ToJsonString(req))
+		glog.Infof("[invokeCompletion] channel timeout, req: %s", utils.ToJsonString(req))
 	}
 
 	return ""

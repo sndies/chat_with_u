@@ -3,11 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/golang/glog"
 	"github.com/sndies/chat_with_u/db"
 	"github.com/sndies/chat_with_u/middleware/cache"
 	httpHandler "github.com/sndies/chat_with_u/middleware/ctx_http_handler"
 	"github.com/sndies/chat_with_u/middleware/id_generator"
-	myLog "github.com/sndies/chat_with_u/middleware/log"
 	"github.com/sndies/chat_with_u/service"
 	"log"
 	"net/http"
@@ -16,7 +16,8 @@ import (
 func main() {
 	// log
 	flag.Parse()
-	defer func(){fmt.Println("----->ready to flush"); myLog.Flush()}()
+	//defer func(){fmt.Println("----->ready to flush"); myLog.Flush()}()
+	defer func() { fmt.Println("----->ready to flush"); glog.Flush() }()
 
 	// init db
 	if err := db.Init(); err != nil {

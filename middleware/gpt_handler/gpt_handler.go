@@ -2,6 +2,7 @@ package gpt_handler
 
 import (
 	"context"
+	"github.com/golang/glog"
 	"github.com/sndies/chat_with_u/middleware/http_client"
 	"github.com/sndies/chat_with_u/middleware/log"
 	"github.com/sndies/chat_with_u/model"
@@ -41,7 +42,8 @@ func Completions(ctx context.Context, msg string, m *model.OpenaiModel) (string,
 	if err != nil {
 		return "", err
 	}
-	log.Infof(ctx, "[Completions] http_res: %s", string(resByte))
+	//log.Infof(ctx, "[Completions] http_res: %s", string(resByte))
+	glog.Infof("[Completions] http_res: %s", string(resByte))
 
 	// 反序列化为具体结构
 	gptResponseBody := model.OpenaiResponseBody{}
@@ -49,7 +51,8 @@ func Completions(ctx context.Context, msg string, m *model.OpenaiModel) (string,
 		log.Errorf(ctx, "[Completions] json decode resp err: %v", err)
 		return "", err
 	}
-	log.Infof(ctx, "[Completions] gptRes: %s", utils.ToJsonString(gptResponseBody))
+	//log.Infof(ctx, "[Completions] gptRes: %s", utils.ToJsonString(gptResponseBody))
+	glog.Infof("[Completions] gptRes: %s", utils.ToJsonString(gptResponseBody))
 
 	// 取回复
 	var reply string
@@ -59,7 +62,8 @@ func Completions(ctx context.Context, msg string, m *model.OpenaiModel) (string,
 			break
 		}
 	}
-	log.Infof(ctx, "[Completions] gpt response text: %s", reply)
+	//log.Infof(ctx, "[Completions] gpt response text: %s", reply)
+	glog.Infof("[Completions] gpt response text: %s", reply)
 
 	return reply, nil
 }

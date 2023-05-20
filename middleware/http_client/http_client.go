@@ -3,6 +3,7 @@ package http_client
 import (
 	"bytes"
 	"context"
+	"github.com/golang/glog"
 	"github.com/sndies/chat_with_u/middleware/log"
 	"github.com/sndies/chat_with_u/utils"
 	"io/ioutil"
@@ -43,7 +44,8 @@ func HttpPost(ctx context.Context, httpUrl, httpProxy string, reqBody interface{
 
 	// 调用
 	response, err := client.Do(req)
-	log.Infof(ctx, "[HttpPost] req: %+v, res: %+v", *req, response)
+	//log.Infof(ctx, "[HttpPost] req: %+v, res: %+v", *req, response)
+	glog.Infof("[HttpPost] req: %+v, res: %+v", *req, response)
 	if err != nil {
 		log.Errorf(ctx, "[HttpPost] http post err: %v", err)
 		return nil, err
