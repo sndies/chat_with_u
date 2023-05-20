@@ -111,6 +111,7 @@ func invokeCompletion(ctx context.Context, req *model.Msg) string {
 		return result
 	case <-time.After(time.Second * 5):
 		// 超时不要回答，会重试的
+		log.Infof(ctx, "[invokeCompletion] channel timeout, req: %s", utils.ToJsonString(req))
 	}
 
 	return ""

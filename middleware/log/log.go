@@ -534,7 +534,6 @@ where the fields are defined as follows:
 	msg              The user-supplied message
 */
 func (l *loggingT) header(ctx context.Context, s severity, depth int) (*buffer, string, int) {
-	fmt.Println("--------> 进入header")
 	_, file, line, ok := runtime.Caller(3 + depth)
 	if !ok {
 		file = "???"
@@ -550,7 +549,6 @@ func (l *loggingT) header(ctx context.Context, s severity, depth int) (*buffer, 
 
 // formatHeader formats a log header using the provided file name and line number.
 func (l *loggingT) formatHeader(ctx context.Context, s severity, file string, line int) *buffer {
-	fmt.Println("--------> 进入formatHeader")
 	now := timeNow()
 	if line < 0 {
 		line = 0 // not a real line number, but acceptable to someDigits
@@ -681,7 +679,6 @@ func (l *loggingT) printWithFileLine(ctx context.Context, s severity, file strin
 
 // output writes the data to the log files and releases the buffer.
 func (l *loggingT) output(s severity, buf *buffer, file string, line int, alsoToStderr bool) {
-	fmt.Println("--------> 进入output")
 	l.mu.Lock()
 	if l.traceLocation.isSet() {
 		if l.traceLocation.match(file, line) {
@@ -833,16 +830,14 @@ func (sb *syncBuffer) Sync() error {
 
 func (sb *syncBuffer) Write(p []byte) (n int, err error) {
 	if sb.nbytes+uint64(len(p)) >= MaxSize {
-		fmt.Println("--------> 准备调用rotateFile")
 		if err := sb.rotateFile(time.Now()); err != nil {
 			sb.logger.exit(err)
 		}
 	}
-	fmt.Println("--------> 无需调用rotateFile")
 	n, err = sb.Writer.Write(p)
 	sb.nbytes += uint64(n)
 	if err != nil {
-		fmt.Println("--------> [write] err: ", err)
+		fmt.Println("--------> [write] log.go line840, err: ", err)
 		sb.logger.exit(err)
 	}
 	return
@@ -850,7 +845,6 @@ func (sb *syncBuffer) Write(p []byte) (n int, err error) {
 
 // rotateFile closes the syncBuffer's file and starts a new one.
 func (sb *syncBuffer) rotateFile(now time.Time) error {
-	fmt.Println("---------> 进入rotateFile")
 	if sb.file != nil {
 		sb.Flush()
 		sb.file.Close()
@@ -904,7 +898,6 @@ const flushInterval = 30 * time.Second
 // flushDaemon periodically flushes the log file buffers.
 func (l *loggingT) flushDaemon() {
 	for range time.NewTicker(flushInterval).C {
-		fmt.Println("----------> start to flush, l: ", l)
 		l.lockAndFlushAll()
 	}
 }
@@ -923,15 +916,8 @@ func (l *loggingT) flushAll() {
 	for s := fatalLog; s >= infoLog; s-- {
 		file := l.file[s]
 		if file != nil {
-			fmt.Println("----------> [flushAll] get file to flush")
-			err := file.Flush() // ignore error
-			if err != nil {
-				fmt.Println("----------> [flushAll] flush err: ", err)
-			}
-			err = file.Sync() // ignore error
-			if err != nil {
-				fmt.Println("----------> [flushAll] sync err: ", err)
-			}
+			_ = file.Flush() // ignore error
+			_ = file.Sync() // ignore error
 		}
 	}
 }
