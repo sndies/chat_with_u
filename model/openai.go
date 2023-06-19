@@ -1,6 +1,6 @@
 package model
 
-// OpenaiModel openai model
+// OpenaiModel openai db_model
 // https://platform.openai.com/docs/api-reference/chat/create
 type OpenaiModel struct {
 	Id         string
@@ -21,7 +21,7 @@ type OpenapiRequestMessageItem struct {
 }
 
 type OpenaiRequestBody struct {
-	Model            string                      `json:"model"`
+	Model            string                      `json:"db_model"`
 	Messages         []OpenapiRequestMessageItem `json:"messages"`
 	MaxTokens        int                         `json:"max_tokens"`
 	Temperature      float32                     `json:"temperature"`
@@ -44,7 +44,7 @@ type OpenaiResponseBody struct {
 	ID      string                  `json:"id"`
 	Object  string                  `json:"object"`
 	Created int                     `json:"created"`
-	Model   string                  `json:"model"`
+	Model   string                  `json:"db_model"`
 	Choices []OpenapiResponseChoice `json:"choices"`
 	Usage   map[string]interface{}  `json:"usage"`
 }

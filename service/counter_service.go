@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/sndies/chat_with_u/db/dao"
-	"github.com/sndies/chat_with_u/db/model"
+	"github.com/sndies/chat_with_u/db/db_model"
 	"gorm.io/gorm"
 )
 
@@ -119,7 +119,7 @@ func upsertCounter(r *http.Request) (int32, error) {
 		createdAt = currentCounter.CreatedAt
 	}
 
-	counter := &model.CounterModel{
+	counter := &db_model.CounterModel{
 		Id:        1,
 		Count:     count,
 		CreatedAt: createdAt,
@@ -137,7 +137,7 @@ func clearCounter() error {
 }
 
 // getCurrentCounter 查询当前计数器
-func getCurrentCounter() (*model.CounterModel, error) {
+func getCurrentCounter() (*db_model.CounterModel, error) {
 	counter, err := dao.GetCounter(1)
 	if err != nil {
 		return nil, err

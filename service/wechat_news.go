@@ -2,16 +2,19 @@ package service
 
 import (
 	"context"
-	"github.com/golang/glog"
-	"github.com/sndies/chat_with_u/consts"
-	"github.com/sndies/chat_with_u/middleware/cache"
-	"github.com/sndies/chat_with_u/middleware/gpt_handler"
-	"github.com/sndies/chat_with_u/model"
-	"github.com/sndies/chat_with_u/utils"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/golang/glog"
+	"github.com/sndies/chat_with_u/consts"
+	"github.com/sndies/chat_with_u/db/dao"
+	"github.com/sndies/chat_with_u/db/db_model"
+	"github.com/sndies/chat_with_u/middleware/cache"
+	"github.com/sndies/chat_with_u/middleware/gpt_handler"
+	"github.com/sndies/chat_with_u/model"
+	"github.com/sndies/chat_with_u/utils"
 )
 
 type NewsReq struct {
@@ -78,20 +81,45 @@ func queryAndWrapRes(ctx context.Context, req *model.Msg) (reply string) {
 		cache.Del(ctx, req.FromUserName)
 	}()
 
-	//// 调用gpt
-	//reply = invokeCompletion(ctx, req)
+	// 用msgId查询数据库
+	qna, err := dao.GetGptQNAByMsgId(ctx, req.MsgId)
+	if qna != nil {
+		// 如果已经有答案直接返回
+		if qna.Answer != "" {
+			reply = qna.Answer
+			return
+		}
+		// 没有答案,告诉用户正在处理中
 
-	// 发起请求
-	reply, err := gpt_handler.Completions(ctx, req.Content, nil)
-	if err != nil {
-		return err.Error()
+	} else {
+		// 如果没有答案, 写记录，先返回处理中
+		err = dao.InsertGptQNA(ctx, &db_model.GptQNA{
+			MsgId:        req.MsgId,
+			FromUserName: req.FromUserName,
+			Question:     req.Content,
+			CreatedAt:    time.Now(),
+		})
+		if err != nil {
+			reply = "网络不稳定，请再发送一次"
+			return
+		}
 	}
 
-	// 出错
-	if len(reply) == 0 {
-		reply = "openai请求超时"
-		return
-	}
+	// 异步
+	utils.SafeGo(ctx, func() {
+		// 发起请求
+		reply, err = gpt_handler.Completions(ctx, req.Content, nil)
+		if err != nil || len(reply) == 0 {
+			return
+		}
+		// 写进数据库
+		err = dao.UpdateAnswerByMsgId(ctx, reply, req.MsgId)
+		if err != nil {
+			return
+		}
+		// todo: 将结果主动推送给用户
+
+	})
 
 	return
 }
