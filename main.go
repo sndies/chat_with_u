@@ -29,8 +29,8 @@ func main() {
 	cache.Init()
 
 	// uri handler
-	httpHandler.HandleFunc("/", service.IndexHandler)                    // 测试的
-	httpHandler.HandleFunc("/api/count", service.CounterHandler)         // 微信云托管自带的,当做以后一个参考
+	//httpHandler.HandleFunc("/", service.IndexHandler)                    // 测试的
+	//httpHandler.HandleFunc("/api/count", service.CounterHandler)         // 微信云托管自带的,当做以后一个参考
 	httpHandler.HandleFunc("/api/wechat_news", service.HandleWechatNews) // 自己写的,先固定自动回复一下
 
 	// run

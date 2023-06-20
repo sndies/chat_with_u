@@ -40,7 +40,7 @@ func IndexHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 func CounterHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	res := &JsonResult{}
 
-	log.Info(ctx, "http request: %+v", r)
+	log.Infof(ctx, "http request: %+v", r)
 	if r.Method == http.MethodGet {
 		reply, err := gpt_handler.Completions(ctx, "今天星期几", nil)
 		if err != nil {

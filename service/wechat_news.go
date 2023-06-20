@@ -76,10 +76,7 @@ func queryAndWrapRes(ctx context.Context, req *model.Msg) (reply string) {
 	}
 
 	// 将user放入缓存
-	_ = cache.Add(ctx, req.FromUserName, true, time.Second*5)
-	defer func() {
-		cache.Del(ctx, req.FromUserName)
-	}()
+	_ = cache.Add(ctx, req.FromUserName, true, time.Second*10)
 
 	// 用msgId查询数据库
 	qna, err := dao.GetGptQNAByMsgId(ctx, req.MsgId)
@@ -90,6 +87,8 @@ func queryAndWrapRes(ctx context.Context, req *model.Msg) (reply string) {
 			return
 		}
 		// 没有答案,告诉用户正在处理中
+		reply = "收到，请稍等..."
+		return
 
 	} else {
 		// 如果没有答案, 写记录，先返回处理中
@@ -103,22 +102,27 @@ func queryAndWrapRes(ctx context.Context, req *model.Msg) (reply string) {
 			reply = "网络不稳定，请再发送一次"
 			return
 		}
+		reply = "收到，请稍等..."
 	}
 
 	// 异步
 	utils.SafeGo(ctx, func() {
-		// 发起请求
-		reply, err = gpt_handler.Completions(ctx, req.Content, nil)
-		if err != nil || len(reply) == 0 {
-			return
-		}
+		//// todo: 发起请求
+		//reply, err = gpt_handler.Completions(ctx, req.Content, nil)
+		//if err != nil || len(reply) == 0 {
+		//	return
+		//}
+		time.Sleep(2 * time.Second)
+		reply = "这是一条假的回复"
 		// 写进数据库
 		err = dao.UpdateAnswerByMsgId(ctx, reply, req.MsgId)
 		if err != nil {
 			return
 		}
-		// todo: 将结果主动推送给用户
-
+		// 将结果主动推送给用户
+		_ = SendMsgToUser(ctx, req.FromUserName, reply)
+		// 删除缓存,用户可以发起下一次请求
+		cache.Del(ctx, req.FromUserName)
 	})
 
 	return
