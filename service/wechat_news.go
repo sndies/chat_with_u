@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"github.com/sndies/chat_with_u/middleware/log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -112,6 +113,7 @@ func queryAndWrapRes(ctx context.Context, req *model.Msg) (reply string) {
 		//if err != nil || len(reply) == 0 {
 		//	return
 		//}
+		log.Infof(ctx, "[queryAndWrapRes] 进入异步流程")
 		time.Sleep(2 * time.Second)
 		reply = "这是一条假的回复"
 		// 写进数据库
@@ -119,6 +121,7 @@ func queryAndWrapRes(ctx context.Context, req *model.Msg) (reply string) {
 		if err != nil {
 			return
 		}
+		log.Infof(ctx, "[queryAndWrapRes] 写数据库成功")
 		// 将结果主动推送给用户
 		_ = SendMsgToUser(ctx, req.FromUserName, reply)
 		// 删除缓存,用户可以发起下一次请求

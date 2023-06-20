@@ -15,7 +15,7 @@ const tableNameGptQna = "gpt_qna"
 func GetGptQNAByMsgId(ctx context.Context, msgId int64) (*db_model.GptQNA, error) {
 	qna := new(db_model.GptQNA)
 
-	err := db.Get().Table(tableNameGptQna).Where("msgId = ?", msgId).First(qna).Error
+	err := db.Get().Table(tableNameGptQna).Where("msg_id = ?", msgId).First(qna).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
