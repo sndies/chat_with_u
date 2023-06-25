@@ -108,14 +108,12 @@ func queryAndWrapRes(ctx context.Context, req *model.Msg) (reply string) {
 
 	// 异步
 	utils.SafeGo(ctx, func() {
-		//// todo: 发起请求
-		//reply, err = gpt_handler.Completions(ctx, req.Content, nil)
-		//if err != nil || len(reply) == 0 {
-		//	return
-		//}
 		log.Infof(ctx, "[queryAndWrapRes] 进入异步流程")
-		time.Sleep(2 * time.Second)
-		reply = "这是一条假的回复"
+		// 发起请求
+		reply, err = gpt_handler.Completions(ctx, req.Content, nil)
+		if err != nil || len(reply) == 0 {
+			return
+		}
 		// 写进数据库
 		err = dao.UpdateAnswerByMsgId(ctx, reply, req.MsgId)
 		if err != nil {

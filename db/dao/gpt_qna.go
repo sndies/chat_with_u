@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"gorm.io/gorm"
+	"time"
 
 	"github.com/sndies/chat_with_u/db"
 	"github.com/sndies/chat_with_u/db/db_model"
@@ -38,7 +39,8 @@ func UpdateAnswerByMsgId(ctx context.Context, answer string, msgId int64) error 
 	err := db.Get().Table(tableNameGptQna).
 		Where("msg_id = ?", msgId).
 		UpdateColumns(map[string]interface{}{
-			"answer": answer,
+			"answer":     answer,
+			"updated_at": time.Now(),
 		}).
 		Error
 	if err != nil {
