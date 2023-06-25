@@ -59,5 +59,6 @@ func HttpPost(ctx context.Context, httpUrl, httpProxy string, reqBody interface{
 		return nil, err
 	}
 
+	log.Infof(ctx, "[HttpPost] response body: %s", string(body))
 	return body, nil
 }
