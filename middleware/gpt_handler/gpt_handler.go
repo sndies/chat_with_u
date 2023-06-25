@@ -42,8 +42,8 @@ func Completions(ctx context.Context, msg string, m *model.OpenaiModel) (string,
 	if err != nil {
 		return "", err
 	}
-	//log.Infof(ctx, "[Completions] http_res: %s", string(resByte))
-	glog.Infof("[Completions] http_res: %s", string(resByte))
+	log.Infof(ctx, "[Completions] http_res: %s", string(resByte))
+	//glog.Infof("[Completions] http_res: %s", string(resByte))
 
 	// 反序列化为具体结构
 	gptResponseBody := model.OpenaiResponseBody{}
@@ -51,8 +51,8 @@ func Completions(ctx context.Context, msg string, m *model.OpenaiModel) (string,
 		log.Errorf(ctx, "[Completions] json decode resp err: %v", err)
 		return "", err
 	}
-	//log.Infof(ctx, "[Completions] gptRes: %s", utils.ToJsonString(gptResponseBody))
-	glog.Infof("[Completions] gptRes: %s", utils.ToJsonString(gptResponseBody))
+	log.Infof(ctx, "[Completions] gptRes: %s", utils.ToJsonString(gptResponseBody))
+	//glog.Infof("[Completions] gptRes: %s", utils.ToJsonString(gptResponseBody))
 
 	// 取回复
 	var reply string

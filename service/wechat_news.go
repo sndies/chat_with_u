@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"github.com/sndies/chat_with_u/middleware/log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -14,6 +13,7 @@ import (
 	"github.com/sndies/chat_with_u/db/db_model"
 	"github.com/sndies/chat_with_u/middleware/cache"
 	"github.com/sndies/chat_with_u/middleware/gpt_handler"
+	"github.com/sndies/chat_with_u/middleware/log"
 	"github.com/sndies/chat_with_u/model"
 	"github.com/sndies/chat_with_u/utils"
 )
@@ -28,8 +28,8 @@ type NewsReq struct {
 }
 
 func HandleWechatNews(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-	//log.Infof(ctx, "receive wechat news, raw_r: %+v", r)
-	glog.Infof("receive wechat news, raw_r: %+v", r)
+	log.Infof(ctx, "receive wechat news, raw_r: %+v", r)
+	//glog.Infof("receive wechat news, raw_r: %+v", r)
 
 	// 这段是用来接入微信开发者验证的
 	if r.Method == http.MethodGet {
@@ -45,8 +45,8 @@ func HandleWechatNews(ctx context.Context, w http.ResponseWriter, r *http.Reques
 		echo(w, []byte("success"))
 		return
 	}
-	//log.Infof(ctx, "receive json req: %s", utils.ToJsonString(reqJson))
-	glog.Infof("receive json req: %s", utils.ToJsonString(reqJson))
+	log.Infof(ctx, "receive json req: %s", utils.ToJsonString(reqJson))
+	//glog.Infof("receive json req: %s", utils.ToJsonString(reqJson))
 
 	// 调用处理逻辑
 	reply := queryAndWrapRes(ctx, reqJson)
@@ -60,8 +60,8 @@ func HandleWechatNews(ctx context.Context, w http.ResponseWriter, r *http.Reques
 func queryAndWrapRes(ctx context.Context, req *model.Msg) (reply string) {
 	// 出口日志
 	start := time.Now()
-	//defer log.Infof(ctx, "[queryAndWrapRes] req: %s, reply: %s, cost: %v", utils.ToJsonString(req), reply, time.Since(start))
-	defer glog.Infof("[queryAndWrapRes] req: %s, reply: %s, cost: %v", utils.ToJsonString(req), reply, time.Since(start))
+	defer log.Infof(ctx, "[queryAndWrapRes] req: %s, reply: %s, cost: %v", utils.ToJsonString(req), reply, time.Since(start))
+	//defer glog.Infof("[queryAndWrapRes] req: %s, reply: %s, cost: %v", utils.ToJsonString(req), reply, time.Since(start))
 
 	// 检查入参
 	req.Content = strings.TrimSpace(req.Content)

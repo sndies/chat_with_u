@@ -2,7 +2,6 @@ package cache
 
 import (
 	"context"
-	"github.com/golang/glog"
 	"github.com/patrickmn/go-cache"
 	"github.com/sndies/chat_with_u/middleware/log"
 	"time"
@@ -24,8 +23,8 @@ func Add(ctx context.Context, key string, val interface{}, expire time.Duration)
 
 func Get(ctx context.Context, key string) (interface{}, bool) {
 	val, exist := cacheClient.Get(key)
-	//log.Infof(ctx, "cache get key: %s, val: %+v, exist: %d", key, val, exist)
-	glog.Infof("cache get key: %s, val: %+v, exist: %d", key, val, exist)
+	log.Infof(ctx, "cache get key: %s, val: %+v, exist: %d", key, val, exist)
+	//glog.Infof("cache get key: %s, val: %+v, exist: %d", key, val, exist)
 	return val, exist
 }
 
