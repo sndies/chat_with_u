@@ -50,5 +50,4 @@ jobs:
           script: |
             cd /root/app
             docker build --network=host . -t chat_with_u
-            docker rmi $(docker images 'none' -q)
             exit
