@@ -27,6 +27,20 @@ func GetGptQNAByMsgId(ctx context.Context, msgId int64) (*db_model.GptQNA, error
 	return qna, err
 }
 
+func GetGptQNAByOpenId(ctx context.Context, openId string, startTime, endTime time.Time) ([]*db_model.GptQNA, error) {
+	var qnaList []*db_model.GptQNA
+
+	err := db.Get().Table(tableNameGptQna).
+		Where("open_id = ? and startTime >= ? and endTime < ?", openId, startTime, endTime).
+		Find(&qnaList).
+		Error
+	if err != nil {
+		log.Errorf(ctx, "[GetGptQNAByOpenId] db err: %+v", err)
+	}
+
+	return qnaList, err
+}
+
 func InsertGptQNA(ctx context.Context, qna *db_model.GptQNA) error {
 	err := db.Get().Table(tableNameGptQna).Create(qna).Error
 	if err != nil {

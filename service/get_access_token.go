@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"os"
 	"time"
 
 	"github.com/sndies/chat_with_u/consts"
@@ -27,8 +28,7 @@ func GetAccessToken(ctx context.Context) (string, error) {
 	req := model.GetAccessTokenReq{
 		GrantType: "client_credential",
 		AppId:     "wxf2492d93ee4fb797",
-		//Secret:    os.Getenv("app_secret"),
-		Secret: "84059f0ee28e8f16c235422dbe6f6d1d",
+		Secret:    os.Getenv("app_secret"),
 	}
 
 	// 发起http请求

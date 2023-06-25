@@ -76,7 +76,14 @@ func queryAndWrapRes(ctx context.Context, req *model.Msg) (reply string) {
 	// 3.将user放入缓存
 	_ = cache.Add(ctx, req.FromUserName, true, time.Second*10)
 
-	// 4.用msgId查询数据库
+	// 4.用户当日免费额度检查
+	isRunOut, _ := IsUserHasRunOutOfQuota(ctx, req.FromUserName)
+	if isRunOut {
+		reply = "抱歉，每天仅有2次免费问答机会"
+		return
+	}
+
+	// 5.用msgId查询数据库
 	qna, err := dao.GetGptQNAByMsgId(ctx, req.MsgId)
 	if qna != nil {
 		// 4.1 如果已经有答案直接返回
