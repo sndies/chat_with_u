@@ -31,7 +31,7 @@ func GetGptQNAByOpenId(ctx context.Context, openId string, startTime, endTime ti
 	var qnaList []*db_model.GptQNA
 
 	err := db.Get().Table(tableNameGptQna).
-		Where("open_id = ? and startTime >= ? and endTime < ?", openId, startTime, endTime).
+		Where("from_user_name = ? and created_at >= ? and created_at < ?", openId, startTime, endTime).
 		Find(&qnaList).
 		Error
 	if err != nil {
